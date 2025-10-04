@@ -1,0 +1,63 @@
+graph TD
+    A[User Request] --> B[EnhancedConversationService]
+    B --> C[Initialize State & Session]
+    
+    C --> D[Session Check: Existing vs New]
+    D --> E{Form Template ID in Session?}
+    
+    E -->|Yes| F[Route to Form Filler Node]
+    E -->|No| G[Route to Router Node]
+    
+    G --> H[Router Node]
+    H --> I{Intent Classification}
+    
+    I -->|fill_form| J[Form Predictor Node]
+    I -->|search_forms| K[Form Searcher Node]
+    I -->|generate_report| L[Report Generator Node]
+    I -->|clarification_needed| M[Clarification Node]
+    
+    J --> N[Enhanced Form Prediction]
+    N --> O{Confidence Level?}
+    
+    O -->|Low| P[Smart Form Selector - Show Alternatives]
+    O -->|High| Q[Form Filler Node]
+    
+    P --> R[User Selects Form]
+    R --> Q
+    
+    F --> Q
+    Q --> S[Enhanced Form Filler Agent]
+    
+    S --> T[Load Form Template from DB]
+    T --> U[Process Current Field]
+    U --> V{Validation Required?}
+    
+    V -->|Yes| W[Field Validation]
+    V -->|No| X[Save Response]
+    
+    W --> X
+    X --> Y{More Fields?}
+    
+    Y -->|Yes| Z[Get Next Field]
+    Y -->|No| AA[Confirmation State]
+    
+    Z --> U
+    
+    AA --> BB{User Confirms?}
+    BB -->|Yes| CC[Submit Form to DB]
+    BB -->|No| DD[Allow Changes]
+    
+    DD --> U
+    CC --> EE[Return Success Response]
+    
+    K --> FF[Search Available Forms]
+    FF --> GG[Return Search Results]
+    GG --> EE
+    
+    L --> HH[Generate Report from Data]
+    HH --> II[Format Report Response]
+    II --> EE
+    
+    M --> JJ[Ask for Clarification]
+    JJ --> KK[Process Clarification Response]
+    KK --> H

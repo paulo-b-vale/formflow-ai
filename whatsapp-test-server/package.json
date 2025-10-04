@@ -1,0 +1,14 @@
+{
+  "name": "ai-form-assistant-whatsapp-test-server",
+  "version": "1.0.0",
+  "description": "A temporary server for testing the AI Form Assistant with WhatsApp.",
+  "main": "whatsapp_test_server.js",
+  "scripts": {
+    "start": "node whatsapp_test_server.js"
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "qrcode-terminal": "^0.12.0",
+    "whatsapp-web.js": "^1.23.0"
+  }
+}

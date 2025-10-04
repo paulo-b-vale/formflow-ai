@@ -1,0 +1,124 @@
+{
+  "templates": [
+    {
+      "id": "form_prediction_enhanced_v3",
+      "name": "Enhanced Form Prediction with Smart Alternatives",
+      "prompt_type": "form_prediction",
+      "template": "Voc\u00ea \u00e9 um especialista em an\u00e1lise de inten\u00e7\u00f5es para sistema de formul\u00e1rios.\n\nTAREFA: Analisar a mensagem do usu\u00e1rio e prever formul\u00e1rios apropriados.\n\nMENSAGEM DO USU\u00c1RIO: \"{user_message}\"\n\nFORMUL\u00c1RIOS DISPON\u00cdVEIS:\n{available_forms}\n\nPROCESSO DE RACIOC\u00cdNIO:\n1. AN\u00c1LISE DA MENSAGEM: Identifique palavras-chave, contexto e inten\u00e7\u00e3o\n2. CORRESPOND\u00caNCIA: Compare com t\u00edtulos, descri\u00e7\u00f5es e tags dos formul\u00e1rios\n3. RANKING: Ordene os formul\u00e1rios por relev\u00e2ncia com confian\u00e7a individual\n4. JUSTIFICATIVA: Explique o racioc\u00ednio para cada op\u00e7\u00e3o\n\nRESPONDA EM JSON:\n{{\n    \"primary_prediction\": {{\n        \"form_id\": \"id_do_formulario_principal\",\n        \"title\": \"Nome do Formul\u00e1rio\",\n        \"description\": \"Descri\u00e7\u00e3o do formul\u00e1rio\",\n        \"confidence_score\": 0.85,\n        \"reasoning\": \"Explica\u00e7\u00e3o para esta escolha\",\n        \"matched_keywords\": [\"palavra1\", \"palavra2\"],\n        \"context_title\": \"\u00c1rea/Contexto\"\n    }},\n    \"alternative_forms\": [\n        {{\n            \"form_id\": \"id_alternativo_1\",\n            \"title\": \"Formul\u00e1rio Alternativo 1\",\n            \"description\": \"Descri\u00e7\u00e3o da alternativa\",\n            \"confidence\": 0.65,\n            \"reasoning\": \"Por que esta \u00e9 uma alternativa v\u00e1lida\",\n            \"match_keywords\": [\"palavra3\", \"palavra4\"],\n            \"context_title\": \"\u00c1rea/Contexto\"\n        }},\n        {{\n            \"form_id\": \"id_alternativo_2\",\n            \"title\": \"Formul\u00e1rio Alternativo 2\",\n            \"description\": \"Descri\u00e7\u00e3o da segunda alternativa\",\n            \"confidence\": 0.55,\n            \"reasoning\": \"Por que esta tamb\u00e9m pode servir\",\n            \"match_keywords\": [\"palavra5\"],\n            \"context_title\": \"\u00c1rea/Contexto\"\n        }}\n    ],\n    \"overall_confidence\": 0.75,\n    \"reasoning_steps\": [\n        {{\n            \"step\": \"an\u00e1lise_mensagem\",\n            \"finding\": \"Identifiquei palavras-chave e contexto\",\n            \"confidence\": 0.9\n        }},\n        {{\n            \"step\": \"correspond\u00eancia_formul\u00e1rios\",\n            \"finding\": \"Encontrei 3 formul\u00e1rios com correspond\u00eancia\",\n            \"confidence\": 0.8\n        }}\n    ],\n    \"requires_user_selection\": false\n}}\n\nREGRAS IMPORTANTES:\n- SEMPRE forne\u00e7a pelo menos 2-3 alternativas, mesmo com alta confian\u00e7a\n- Se confian\u00e7a prim\u00e1ria < 70%, definir requires_user_selection=true\n- Ordene alternativas por confian\u00e7a (maior primeiro)\n- Matched_keywords devem ser palavras espec\u00edficas da mensagem do usu\u00e1rio\n- Reasoning deve explicar POR QUE cada formul\u00e1rio faz sentido\n- Context_title deve indicar a \u00e1rea/categoria do formul\u00e1rio",
+      "version": "3.0.0",
+      "description": "Predicts appropriate form with detailed alternatives for user selection",
+      "variables": [
+        "user_message",
+        "available_forms"
+      ],
+      "examples": [
+        {
+          "user_message": "Preciso reportar um acidente na obra",
+          "expected_primary": "construction_incident_report",
+          "expected_alternatives": [
+            "safety_report",
+            "general_incident_report"
+          ],
+          "reasoning": "Palavra 'acidente' indica relat\u00f3rio de incidente, 'obra' especifica constru\u00e7\u00e3o"
+        }
+      ],
+      "metadata": {},
+      "created_at": "2025-10-03T01:24:49.086414",
+      "performance_metrics": {}
+    },
+    {
+      "id": "form_prediction_quick_v1",
+      "name": "Quick Form Prediction",
+      "prompt_type": "form_prediction",
+      "template": "Mensagem: \"{user_message}\"\nFormul\u00e1rios: {available_forms}\n\nResponda apenas o ID do formul\u00e1rio mais apropriado e confian\u00e7a:\n{{\"form_id\": \"xxx\", \"confidence\": 0.xx}}",
+      "version": "1.0.0",
+      "description": "Fast form prediction for obvious cases",
+      "variables": [
+        "user_message",
+        "available_forms"
+      ],
+      "examples": [],
+      "metadata": {},
+      "created_at": "2025-10-03T01:24:49.086426",
+      "performance_metrics": {}
+    },
+    {
+      "id": "field_extraction_multi_v2",
+      "name": "Multi-Field Extraction with Confidence",
+      "prompt_type": "field_extraction",
+      "template": "Voc\u00ea \u00e9 um especialista em extrair informa\u00e7\u00f5es de mensagens para preencher formul\u00e1rios.\n\nMENSAGEM DO USU\u00c1RIO: \"{user_message}\"\n\nCAMPOS PARA PREENCHER:\n{unfilled_fields}\n\nPROCESSO:\n1. IDENTIFICA\u00c7\u00c3O: Encontre informa\u00e7\u00f5es na mensagem que correspondem aos campos\n2. VALIDA\u00c7\u00c3O: Verifique se a informa\u00e7\u00e3o est\u00e1 no formato correto\n3. CONFIAN\u00c7A: Avalie certeza de cada extra\u00e7\u00e3o (0-100%)\n\nRESPONDA EM JSON:\n{{\n    \"extracted_fields\": {{\n        \"campo_id\": {{\n            \"value\": \"valor_extra\u00eddo\",\n            \"confidence\": 0.95,\n            \"reasoning\": \"Encontrei 'Jo\u00e3o Silva' que claramente \u00e9 um nome\",\n            \"source_text\": \"Meu nome \u00e9 Jo\u00e3o Silva\"\n        }}\n    }},\n    \"summary\": {{\n        \"total_fields_found\": 3,\n        \"average_confidence\": 0.87,\n        \"extraction_quality\": \"high\"\n    }}\n}}\n\nREGRAS:\n- Apenas extraia informa\u00e7\u00f5es que voc\u00ea tem certeza (confian\u00e7a > 60%)\n- Para campos de sele\u00e7\u00e3o, use apenas valores das op\u00e7\u00f5es fornecidas\n- Para datas, converta para formato AAAA-MM-DD\n- N\u00c3O invente informa\u00e7\u00f5es que n\u00e3o est\u00e3o na mensagem",
+      "version": "2.0.0",
+      "description": "Extracts multiple form fields from user message with confidence tracking",
+      "variables": [
+        "user_message",
+        "unfilled_fields"
+      ],
+      "examples": [
+        {
+          "user_message": "Meu nome \u00e9 Jo\u00e3o Silva, telefone (11) 99999-9999",
+          "expected_extraction": {
+            "nome": {
+              "value": "Jo\u00e3o Silva",
+              "confidence": 0.95
+            },
+            "telefone": {
+              "value": "(11) 99999-9999",
+              "confidence": 0.9
+            }
+          }
+        }
+      ],
+      "metadata": {},
+      "created_at": "2025-10-03T01:24:49.086435",
+      "performance_metrics": {}
+    },
+    {
+      "id": "field_validation_single_v1",
+      "name": "Single Field Validation",
+      "prompt_type": "validation",
+      "template": "CAMPO: {field_info}\nVALOR FORNECIDO: \"{user_input}\"\n\nValide e responda:\n{{\n    \"is_valid\": true/false,\n    \"processed_value\": \"valor_limpo\",\n    \"confidence\": 0.9,\n    \"issues\": [\"problema1\", \"problema2\"],\n    \"suggestions\": [\"sugest\u00e3o1\", \"sugest\u00e3o2\"]\n}}",
+      "version": "1.0.0",
+      "description": "Validates a single field value with detailed feedback",
+      "variables": [
+        "field_info",
+        "user_input"
+      ],
+      "examples": [],
+      "metadata": {},
+      "created_at": "2025-10-03T01:24:49.086448",
+      "performance_metrics": {}
+    },
+    {
+      "id": "intent_classification_v1",
+      "name": "Intent Classification",
+      "prompt_type": "intent_classification",
+      "template": "Classifique a inten\u00e7\u00e3o do usu\u00e1rio:\n\nMENSAGEM: \"{user_message}\"\n\nINTEN\u00c7\u00d5ES POSS\u00cdVEIS:\n- fill_form: Quer preencher um formul\u00e1rio\n- search_forms: Quer buscar formul\u00e1rios existentes\n- generate_report: Quer relat\u00f3rios/an\u00e1lises\n- clarification_needed: Mensagem amb\u00edgua\n\nRESPONDA:\n{{\n    \"intent\": \"fill_form\",\n    \"confidence\": 0.85,\n    \"reasoning\": \"Usu\u00e1rio mencionou 'preencher' explicitamente\"\n}}",
+      "version": "1.0.0",
+      "description": "Classifies user intent for routing decisions",
+      "variables": [
+        "user_message"
+      ],
+      "examples": [],
+      "metadata": {},
+      "created_at": "2025-10-03T01:24:49.086462",
+      "performance_metrics": {}
+    },
+    {
+      "id": "clarification_smart_v1",
+      "name": "Smart Clarification Generator",
+      "prompt_type": "clarification",
+      "template": "MENSAGEM AMB\u00cdGUA: \"{user_message}\"\nCONTEXTO: {context}\nOP\u00c7\u00d5ES DISPON\u00cdVEIS: {available_options}\n\nGere uma pergunta de esclarecimento \u00fatil e espec\u00edfica em portugu\u00eas.\nSeja conciso e ofere\u00e7a op\u00e7\u00f5es concretas quando poss\u00edvel.\n\nRESPOSTA:\n{{\n    \"clarification_message\": \"Preciso esclarecer...\",\n    \"suggested_options\": [\"op\u00e7\u00e3o1\", \"op\u00e7\u00e3o2\"],\n    \"confidence_needed\": 0.7\n}}",
+      "version": "1.0.0",
+      "description": "Generates contextual clarification questions",
+      "variables": [
+        "user_message",
+        "available_options",
+        "context"
+      ],
+      "examples": [],
+      "metadata": {},
+      "created_at": "2025-10-03T01:24:49.086469",
+      "performance_metrics": {}
+    }
+  ]
+}
