@@ -68,21 +68,6 @@ class RouterNode(BaseNode):
         else:
             self.logger.info(f"❌ ROUTER: No form_template_id found, session_data={session_data is not None}")
 
-        # Check if this might be a report/search request before defaulting to form filling
-        report_keywords = ["report", "relatório", "análise", "analysis", "resumo", "summary", "dados", "data", "estatística", "estatisticas", "tendência", "trend"]
-        search_keywords = ["buscar", "search", "encontrar", "find", "consultar", "query", "mostrar", "show", "ver", "see", "list"]
-
-        user_msg_lower = user_message.lower()
-        might_be_report = any(keyword in user_msg_lower for keyword in report_keywords)
-        might_be_search = any(keyword in user_msg_lower for keyword in search_keywords)
-
-        print(f"🔍 ROUTER DEBUG: message='{user_message}', might_be_report={might_be_report}, might_be_search={might_be_search}")
-
-        # Skip intent classification optimization only for clear form requests
-        if (session_state == "STARTING" or not session_data) and not might_be_report and not might_be_search:
-            self.logger.info("First message detected, appears to be form request - routing to form predictor")
-            return NodeResponse(next_node="form_predictor")
-
         print(f"🔍 ROUTER: Will perform intent classification for: '{user_message}'")
 
         # Enhanced intent classification only for subsequent messages

@@ -15,6 +15,9 @@ let isProcessing = false;
 // User conversation states for multi-step flows
 let userStates = new Map(); // Will store conversation state per user
 
+// Session ID for enhanced conversation continuity
+let conversationSessionId = null;
+
 // Conversation states
 const STATES = {
     IDLE: 'idle',
@@ -115,14 +118,17 @@ async function loginUser(password) {
             phone_number: MY_NUMBER.split('@')[0],
             password: password
         };
-        
+
         console.log(`🔐 Logging in user:`, { phone: payload.phone_number });
-        
+
         const response = await axios.post(`${API_ENDPOINT}/auth/phone-login`, payload);
         bearerToken = response.data.tokens.access_token;
         isAuthenticated = true;
-        
-        console.log(`✅ Login successful`);
+
+        // Generate a unique session ID for this conversation
+        conversationSessionId = `whatsapp_${MY_NUMBER.split('@')[0]}_${Date.now()}`;
+
+        console.log(`✅ Login successful, session: ${conversationSessionId}`);
         return { success: true, token: bearerToken };
     } catch (error) {
         console.error(`❌ Login failed:`, error.response?.data || error.message);
@@ -132,24 +138,34 @@ async function loginUser(password) {
 
 async function sendToAI(userInput) {
     try {
-        console.log(`🧠 Sending to AI: "${userInput}"`);
-        
-        const payload = { user_input: userInput };
+        console.log(`🧠 Sending to AI: "${userInput}" (session: ${conversationSessionId})`);
+
+        const payload = {
+            user_message: userInput,
+            session_id: conversationSessionId,
+            file_ids: []
+        };
         const headers = { Authorization: `Bearer ${bearerToken}` };
-        
-        const response = await axios.post(`${API_ENDPOINT}/conversation/message`, payload, { headers });
-        
-        console.log(`✅ AI response received`);
-        return { success: true, message: response.data.message || "I understand! How can I help you further?" };
+
+        const response = await axios.post(`${API_ENDPOINT}/enhanced_conversation/message`, payload, { headers });
+
+        // Update session ID from response to maintain continuity
+        if (response.data.session_id) {
+            conversationSessionId = response.data.session_id;
+        }
+
+        console.log(`✅ AI response received (session: ${conversationSessionId})`);
+        return { success: true, message: response.data.response || "I understand! How can I help you further?" };
     } catch (error) {
         console.error(`❌ AI request failed:`, error.response?.data || error.message);
-        
+
         if (error.response?.status === 401) {
             bearerToken = null;
             isAuthenticated = false;
+            conversationSessionId = null;
             return { success: false, error: "Oops! Your session expired. Let me help you log back in! 🔄" };
         }
-        
+
         return { success: false, error: "I'm having a little trouble processing that right now. Could you try again? 🤔" };
     }
 }
@@ -289,8 +305,9 @@ async function handleLoginPassword(input) {
 async function handleLogout() {
     bearerToken = null;
     isAuthenticated = false;
+    conversationSessionId = null;
     clearUserState();
-    
+
     await sendMessage(
         "👋 You've been logged out successfully!\n\n" +
         "Thanks for using AI Form Assistant! Come back anytime by saying 'login'."
@@ -389,6 +406,7 @@ async function processMessage(messageBody) {
                 `🔍 *Debug Info*\n\n` +
                 `Status: ${isAuthenticated ? '🟢 Logged in' : '🔴 Not logged in'}\n` +
                 `State: ${currentState.state}\n` +
+                `Session: ${conversationSessionId || '❌ None'}\n` +
                 `Token: ${bearerToken ? '✅ Present' : '❌ None'}`
             );
         }
@@ -467,6 +485,7 @@ client.on('disconnected', (reason) => {
     // Reset state on disconnect
     bearerToken = null;
     isAuthenticated = false;
+    conversationSessionId = null;
     isProcessing = false;
     userStates.clear();
 });

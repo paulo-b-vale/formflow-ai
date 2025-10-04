@@ -1,5 +1,5 @@
 # app/services/enhanced_conversation_service_fixed.py
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 import asyncio
 import json
 import logging
@@ -89,16 +89,22 @@ class EnhancedConversationService(BaseService):
         logger.info("EnhancedConversationService initialized successfully")
 
     async def process_message(
-        self, 
-        session_id: str, 
-        user_message: str, 
-        user_id: str, 
+        self,
+        session_id: str,
+        user_message: str,
+        user_id: str,
         form_template_id: str = None,
-        user_token: str = None
+        user_token: str = None,
+        file_ids: Optional[List[str]] = None
     ) -> str:
         """Process user message with enhanced session handling and response extraction."""
 
-        logger.info(f"📍 SERVICE: ENTRY - process_message called with session_id='{session_id}', user_message='{user_message}', user_id='{user_id}'")
+        logger.info(f"📍 SERVICE: ENTRY - process_message called with session_id='{session_id}', user_message='{user_message}', user_id='{user_id}', file_ids={file_ids}")
+
+        # Process files if provided
+        file_contents = []
+        if file_ids:
+            file_contents = await self._process_file_attachments(file_ids, user_id)
 
         try:
             # Enhanced session retrieval with detailed logging
@@ -127,6 +133,7 @@ class EnhancedConversationService(BaseService):
                 "api_client": self.internal_client,
                 "session_state": session_data.state.value if isinstance(session_data.state, SessionState) else session_data.state,
                 "conversation_history": getattr(session_data, 'conversation_history', []),
+                "file_contents": file_contents,  # Add file contents to state
                 # Initialize other fields that may be expected by the graph
                 "current_field": None,
                 "responses": getattr(session_data, 'responses', {}),
@@ -522,6 +529,64 @@ class EnhancedConversationService(BaseService):
         except Exception as e:
             logger.error(f"Error retrieving conversation history: {e}")
             return []
+
+    async def _process_file_attachments(self, file_ids: List[str], user_id: str) -> List[Dict[str, Any]]:
+        """
+        Process file attachments by retrieving file metadata and content.
+        Returns list of file information for the LLM to process.
+        """
+        file_contents = []
+        try:
+            from app.services.file_service import file_service
+
+            for file_id in file_ids:
+                try:
+                    # Get file from database
+                    file_doc = await self.db.files.find_one({"_id": ObjectId(file_id)})
+                    if not file_doc:
+                        logger.warning(f"File {file_id} not found")
+                        continue
+
+                    # Check if user has access (files they uploaded)
+                    if str(file_doc.get("uploaded_by")) != user_id:
+                        logger.warning(f"User {user_id} doesn't have access to file {file_id}")
+                        continue
+
+                    # Get file content
+                    content, filename, content_type = await file_service.get_file_content(
+                        file_id, {"_id": user_id}
+                    )
+
+                    # Decode content based on type
+                    decoded_content = None
+                    if content_type.startswith('text/') or content_type in ['application/json', 'application/xml']:
+                        decoded_content = content.decode('utf-8', errors='ignore')
+                    elif content_type == 'application/pdf':
+                        # For PDF, just indicate it's a PDF (could add PDF parsing later)
+                        decoded_content = f"[PDF Document: {filename}]"
+                    elif content_type.startswith('image/'):
+                        decoded_content = f"[Image: {filename}]"
+                    else:
+                        decoded_content = f"[File: {filename}, type: {content_type}]"
+
+                    file_contents.append({
+                        "file_id": file_id,
+                        "filename": filename,
+                        "content_type": content_type,
+                        "size": len(content),
+                        "content": decoded_content
+                    })
+
+                    logger.info(f"Processed file {file_id}: {filename} ({content_type})")
+
+                except Exception as e:
+                    logger.error(f"Error processing file {file_id}: {e}")
+                    continue
+
+        except Exception as e:
+            logger.error(f"Error in _process_file_attachments: {e}")
+
+        return file_contents
 
     async def cleanup(self):
         """Cleanup resources."""

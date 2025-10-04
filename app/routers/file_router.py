@@ -1,7 +1,7 @@
 # app/routers/file_router.py
 from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File, Form
 from fastapi.responses import StreamingResponse
-from typing import Optional
+from typing import Optional, List
 import io
 
 from app.schemas.file import FileResponse
@@ -34,6 +34,41 @@ async def upload_file(
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     except NotFoundError as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+
+@router.post("/chat/upload", status_code=status.HTTP_201_CREATED)
+async def upload_chat_files(
+    files: List[UploadFile] = File(...),
+    current_user: UserResponse = Depends(get_current_active_user)
+):
+    """
+    Uploads files for chat conversation (without requiring context_id).
+    Returns list of file IDs that can be sent with the message.
+    """
+    try:
+        uploaded_files = []
+        for file in files:
+            file_content = await file.read()
+            # Upload without context_id - will be associated when used in conversation
+            file_response = await file_service.upload_file(
+                file_data=file_content,
+                filename=file.filename,
+                content_type=file.content_type,
+                context_id=None,  # No context yet
+                current_user=current_user.model_dump(),
+                description=f"Chat upload: {file.filename}"
+            )
+            uploaded_files.append({
+                "file_id": str(file_response.id),
+                "filename": file_response.filename,
+                "content_type": file_response.content_type,
+                "size": file_response.size
+            })
+
+        return {"files": uploaded_files}
+    except (ValidationError, PermissionError) as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
 @router.get("/{file_id}/download")
 async def download_file(

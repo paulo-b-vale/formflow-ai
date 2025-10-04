@@ -37,38 +37,6 @@ class EnhancedFormPredictorNode(ObservabilityMixin):
 
         self.log_info(f"Predicting form for message: {user_message}")
 
-        # Check if this is actually a report/analysis request that was misrouted
-        if user_message:
-            user_msg_lower = user_message.lower()
-            report_indicators = ["report", "relatório", "analysis", "análise", "resumo", "summary",
-                               "dados", "data", "estatística", "estatisticas", "tendência", "trend",
-                               "gerar", "generate", "criar", "create", "mostrar dados", "show data"]
-
-            incident_indicators = ["incident", "incidente", "acidente", "accident", "segurança", "safety",
-                                 "construção", "construction", "obra", "workplace", "lesão", "injury"]
-
-            has_report_request = any(indicator in user_msg_lower for indicator in report_indicators)
-            has_incident_context = any(indicator in user_msg_lower for indicator in incident_indicators)
-
-            if has_report_request:
-                print(f"🔀 FORM_PREDICTOR: Detected report request, redirecting to report_generator")
-
-                # Identify specific incident forms if this is an incident report request
-                incident_form_types = []
-                if has_incident_context:
-                    if any(word in user_msg_lower for word in ["construção", "construction", "obra"]):
-                        incident_form_types.append("construction_incident")
-                    if any(word in user_msg_lower for word in ["hospital", "médico", "medical", "patient"]):
-                        incident_form_types.append("hospital_incident")
-
-                return {
-                    "next_node": "report_generator",
-                    "requires_clarification": False,
-                    "incident_form_types": incident_form_types,
-                    "final_response": "Detectei que você quer um relatório. Redirecionando para o gerador de relatórios...",
-                    "reasoning": f"User request appears to be for report generation with incident context: {incident_form_types}"
-                }
-
         # Get available forms with caching optimization
         logger.info(f"Form access check - user_id: {user_id}, user_token present: {bool(user_token)}, api_client present: {bool(api_client)}")
 

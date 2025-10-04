@@ -10,6 +10,7 @@ python-multipart
 langchain
 langchain-google-genai
 langgraph
+langsmith
 aiofiles
 python-dotenv
 redis

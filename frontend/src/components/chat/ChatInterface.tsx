@@ -1,7 +1,7 @@
 import { useState, useEffect, FC } from 'react';
 import withAuth from '../withAuth';
 import MessageWindow from './MessageWindow';
-import ChatInput from './ChatInput';
+import { ChatInput } from './ChatInput';
 import api from '../../lib/api';
 
 // Define the structure of a message
@@ -26,7 +26,7 @@ const ChatInterface: FC = () => {
     setSessionId(`session_${Date.now()}`);
   }, []);
 
-  const handleSend = async (message: string) => {
+  const handleSendMessage = async (message: string, files?: File[]) => {
     if (isLoading || !message.trim() || !sessionId) return;
 
     const userMessage: ChatMessage = { text: message, sender: 'user' };
@@ -34,17 +34,36 @@ const ChatInterface: FC = () => {
     setIsLoading(true);
 
     try {
+      // Handle file uploads if present
+      let fileIds: string[] = [];
+      if (files && files.length > 0) {
+        const formData = new FormData();
+        files.forEach((file) => {
+          formData.append('files', file);
+        });
+
+        try {
+          const uploadResponse = await api.post('/files/chat/upload', formData, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+          });
+          fileIds = uploadResponse.data.files?.map((f: any) => f.file_id) || [];
+        } catch (uploadError) {
+          console.error('File upload failed:', uploadError);
+        }
+      }
+
       // The frontend now correctly calls the enhanced conversation endpoint
       const response = await api.post('/enhanced_conversation/message', {
         session_id: sessionId,
-        user_message: message, // The backend expects 'user_message' in the body
+        user_message: message,
+        file_ids: fileIds.length > 0 ? fileIds : undefined,
       });
-      
+
       const botMessage: ChatMessage = {
-        text: response.data.response, // The backend sends 'response' in the response
+        text: response.data.response,
         sender: 'bot',
       };
-      
+
       setMessages(prev => [...prev, botMessage]);
       setSessionId(response.data.session_id);
 
@@ -65,8 +84,8 @@ const ChatInterface: FC = () => {
       <h1 className="text-2xl font-bold p-4 border-b text-center">AI Form Assistant</h1>
       {/* The MessageWindow component receives the messages and loading state as props */}
       <MessageWindow messages={messages} isLoading={isLoading} />
-      {/* The ChatInput component receives the onSend handler and loading state as props */}
-      <ChatInput onSend={handleSend} isLoading={isLoading} />
+      {/* The ChatInput component receives the onSendMessage handler and loading state as props */}
+      <ChatInput onSendMessage={handleSendMessage} isLoading={isLoading} />
     </div>
   );
 };

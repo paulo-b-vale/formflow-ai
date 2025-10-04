@@ -1,6 +1,7 @@
 import '@/styles/globals.css'
 import type { AppProps } from 'next/app'
 import { AuthProvider } from '@/contexts/AuthContext'
+import { ThemeProvider } from '@/contexts/ThemeContext'
 import Layout from '@/components/Layout'
 import AdminLayout from '@/components/AdminLayout'
 import { useRouter } from 'next/router'
@@ -10,16 +11,18 @@ export default function App({ Component, pageProps }: AppProps) {
   const isAdminRoute = router.pathname.startsWith('/admin');
 
   return (
-    <AuthProvider>
-      <Layout>
-        {isAdminRoute ? (
-          <AdminLayout>
+    <ThemeProvider>
+      <AuthProvider>
+        <Layout>
+          {isAdminRoute ? (
+            <AdminLayout>
+              <Component {...pageProps} />
+            </AdminLayout>
+          ) : (
             <Component {...pageProps} />
-          </AdminLayout>
-        ) : (
-          <Component {...pageProps} />
-        )}
-      </Layout>
-    </AuthProvider>
+          )}
+        </Layout>
+      </AuthProvider>
+    </ThemeProvider>
   )
 }

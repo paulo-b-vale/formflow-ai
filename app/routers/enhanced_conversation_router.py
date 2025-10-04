@@ -51,13 +51,14 @@ async def handle_message(
         logger.info(f"📍 ROUTER: Received request: session_id={request.session_id}, user_message='{request.user_message}', form_id={request.form_id}")
         logger.info(f"📍 ROUTER: Current user ID: {current_user.id}")
 
-        logger.info(f"📍 ROUTER: About to call service with session_id={request.session_id}")
+        logger.info(f"📍 ROUTER: About to call service with session_id={request.session_id}, file_ids={request.file_ids}")
         response_text = await enhanced_conversation_service.process_message(
             session_id=request.session_id,
             user_message=request.user_message,
             user_id=str(current_user.id),
             form_template_id=request.form_id,  # Pass optional form_id if provided
-            user_token=user_token  # Pass the extracted token
+            user_token=user_token,  # Pass the extracted token
+            file_ids=request.file_ids  # Pass file IDs if provided
         )
         logger.info(f"📍 ROUTER: Service returned, session_id should still be {request.session_id}")
         

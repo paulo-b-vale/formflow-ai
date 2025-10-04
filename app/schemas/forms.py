@@ -13,6 +13,7 @@ class ConversationRequest(BaseModel):
     session_id: str
     user_message: str
     form_id: Optional[str] = None # This makes form_id optional
+    file_ids: Optional[List[str]] = None # List of uploaded file IDs to process
 
 class ConversationResponse(BaseModel):
     response: str

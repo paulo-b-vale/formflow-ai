@@ -44,11 +44,27 @@ class ReportGeneratorNode(BaseNode):
             if report_params.get("needs_clarification"):
                 return await self._handle_report_clarification(report_params, user_message)
 
+            # Extract keywords with fallback
+            keywords = report_params.get("keywords", [])
+
+            # Fallback: If LLM failed to extract keywords, try basic extraction from user message
+            if not keywords and user_message:
+                keywords = self._extract_keywords_from_message(user_message)
+                if keywords:
+                    self.logger.warning(f"⚠️ REPORT_GENERATOR: LLM failed to extract keywords, using fallback: {keywords}")
+                else:
+                    self.logger.error(f"❌ REPORT_GENERATOR: No keywords extracted from message: '{user_message}'")
+                    return NodeResponse(
+                        final_response="I couldn't determine what type of forms you want a report about. Please be more specific about which forms or topics you're interested in (e.g., 'incident reports', 'safety forms', 'construction checklists').",
+                        is_complete=False,
+                        requires_clarification=True
+                    )
+
             # Use improved keyword-based database query
-            self.logger.info(f"🔍 REPORT_GENERATOR: Using enhanced database query with keywords: {report_params.get('keywords', [])}")
+            self.logger.info(f"🔍 REPORT_GENERATOR: Using enhanced database query with keywords: {keywords}")
             report_data = await self._query_forms_from_database(
                 user_id=user_id,
-                keywords=report_params.get("keywords", []),
+                keywords=keywords,
                 start_date=report_params.get("time_period", {}).get("start_date"),
                 end_date=report_params.get("time_period", {}).get("end_date")
             )
@@ -640,6 +656,43 @@ Just let me know what interests you most!"""
             self.logger.error(f"🚨 FORM_QUERY ERROR: {e}")
             self.logger.exception("Full traceback:")
             return {"templates": [], "submissions": [], "analytics": {}, "error": str(e)}
+
+    def _extract_keywords_from_message(self, user_message: str) -> List[str]:
+        """
+        Fallback keyword extraction when LLM fails.
+        Extracts common form-related keywords from user message.
+        """
+        keywords = []
+        message_lower = user_message.lower()
+
+        # Common keyword mappings (add more as needed)
+        keyword_map = {
+            "incident": ["incident", "incidente", "acidente"],
+            "safety": ["safety", "segurança"],
+            "construction": ["construction", "construção", "obra"],
+            "hospital": ["hospital", "hospitalar", "médico", "medical"],
+            "maintenance": ["maintenance", "manutenção"],
+            "inspection": ["inspection", "inspeção"],
+            "checklist": ["checklist", "verificação"],
+            "report": ["report", "relatório"],
+            "evaluation": ["evaluation", "avaliação"],
+            "assessment": ["assessment", "avaliação"],
+        }
+
+        # Extract keywords that appear in the message
+        for key, variants in keyword_map.items():
+            if any(variant in message_lower for variant in variants):
+                keywords.extend(variants)
+
+        # Remove duplicates while preserving order
+        seen = set()
+        unique_keywords = []
+        for kw in keywords:
+            if kw not in seen:
+                seen.add(kw)
+                unique_keywords.append(kw)
+
+        return unique_keywords
 
     def _get_required_state_keys(self) -> list:
         """Get required state keys for report generation."""

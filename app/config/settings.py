@@ -19,6 +19,11 @@ class Settings(BaseSettings):
     GEMINI_API_KEY: str
     UPLOAD_DIRECTORY: str = "/app/uploads"
     MAX_FILE_SIZE: int = 50 * 1024 * 1024  # 50MB default
+
+    # LangSmith tracing settings
+    LANGCHAIN_TRACING_V2: str = "false"
+    LANGCHAIN_API_KEY: str = ""
+    LANGCHAIN_PROJECT: str = "default"
     
     # S3 Configuration
     S3_ACCESS_KEY: str

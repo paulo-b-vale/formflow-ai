@@ -43,14 +43,16 @@ class FileService(BaseService):
         file_data: bytes,
         filename: str,
         content_type: str,
-        context_id: str,
+        context_id: Optional[str],
         current_user: Dict[str, Any],
         description: Optional[str] = None
     ) -> FileResponse:
         """
         Validates and saves a file to S3, and records its metadata in the database.
+        context_id is optional - if None, file is uploaded without context association (e.g., chat files).
         """
-        await self._validate_file_permissions(context_id, current_user)
+        if context_id is not None:
+            await self._validate_file_permissions(context_id, current_user)
         self._validate_file_properties(file_data, content_type)
 
         # If S3 is not available, store in local filesystem temporarily
@@ -70,14 +72,15 @@ class FileService(BaseService):
             logger.warning(f"File stored locally: {s3_file_key}")
         else:
             # Upload file to S3
+            metadata = {"uploaded_by": current_user["_id"]}
+            if context_id is not None:
+                metadata["context_id"] = context_id
+
             s3_file_key = self.s3_storage.upload_file(
                 file_data,
                 filename,
                 content_type,
-                metadata={
-                    "context_id": context_id,
-                    "uploaded_by": current_user["_id"]
-                }
+                metadata=metadata
             )
 
         category = self._get_file_category(content_type)
