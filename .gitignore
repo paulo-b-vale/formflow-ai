@@ -31,4 +31,4 @@ build.log
 Thumbs.db
 
 # Docker
-uploads/
+uploads/.env
