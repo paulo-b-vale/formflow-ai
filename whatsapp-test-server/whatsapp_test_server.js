@@ -4,7 +4,7 @@ const axios = require('axios');
 
 // --- CONFIGURATION ---
 const API_ENDPOINT = "http://app:8000";
-const MY_NUMBER = "558695031485@c.us"; // Your WhatsApp number
+const MY_NUMBER = "contry_cod,regional_code,number,no_caracteres@c.us"; // Your WhatsApp number
 const SESSION_DATA_PATH = "/usr/src/app/session_data";
 
 // --- ENHANCED STATE MANAGEMENT ---
