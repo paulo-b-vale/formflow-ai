@@ -11,45 +11,38 @@
 [![Next.js](https://img.shields.io/badge/Next.js-14+-black.svg)](https://nextjs.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-[🎬 Demo Video](#demo-video) • [📚 Documentation](#documentation) • [🚀 Quick Start](#-quick-start) • [🏗️ Architecture](#️-architecture)
+[📸 Screenshots](#-screenshots) • [📚 Documentation](#documentation) • [🚀 Quick Start](#-quick-start) • [🏗️ Architecture](#️-architecture)
 
 </div>
 
 ---
 
-## 📺 Demo Video
-
-> **Watch the full demonstration:**
->
-> 🎥 [Click here to watch the FormFlow AI demo video](YOUR_VIDEO_LINK_HERE)
->
-> *Replace `YOUR_VIDEO_LINK_HERE` with your YouTube/Vimeo/Loom link*
-
----
 
 ## 📸 Screenshots
 
 <div align="center">
 
-### Main Dashboard
-![Dashboard](docs/screenshots/dashboard.png)
-*AI-powered form filling interface with real-time validation*
+### User Dashboard
+![User Dashboard](image/user%20dashboard.png)
+*Clean and intuitive user dashboard for managing your forms and conversations*
 
-### Conversational Interface
-![Conversation](docs/screenshots/conversation.png)
+### Register Page
+![Register Page](image/register%20page.png)
+*Simple registration process to get started with FormFlow AI*
+
+### Conversational Chat
+![Chat Interface](image/chat.png)
 *Natural language conversation for seamless form completion*
 
-### WhatsApp Integration
-![WhatsApp Bot](docs/screenshots/whatsapp-bot.png)
-*Fill forms directly through WhatsApp with our intelligent bot*
+### Question Answering
+![Question Answering](image/question%20answering.png)
+*AI intelligently processes and validates your responses in real-time*
 
-### Analytics & Reports
-![Analytics](docs/screenshots/analytics.png)
-*Comprehensive analytics and automated report generation*
+### Final Answer Preview
+![Question Final Answer](image/question%20final%20answer.png)
+*Review and confirm your completed form before submission*
 
 </div>
-
-> **📁 To add your screenshots:** Place your images in the `docs/screenshots/` folder and they'll automatically display above.
 
 ---
 
