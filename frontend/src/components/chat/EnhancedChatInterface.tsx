@@ -198,7 +198,7 @@ const EnhancedChatInterface: FC = () => {
             )}
             <div className="flex items-center gap-2">
               {/* Gemini-style sparkle icon */}
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-slate-600 via-blue-500 to-teal-500 flex items-center justify-center">
                 <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 2L13.09 8.26L19 9.27L13.18 14.14L14.18 20.02L12 17.77L9.82 20.02L10.82 14.14L5 9.27L10.91 8.26L12 2Z" />
                 </svg>
@@ -223,7 +223,7 @@ const EnhancedChatInterface: FC = () => {
             {/* Loading indicator - Gemini style */}
             {isLoading && (
               <div className="flex gap-4 py-6">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 flex items-center justify-center flex-shrink-0">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-slate-600 via-blue-500 to-teal-500 flex items-center justify-center flex-shrink-0">
                   <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M12 2L13.09 8.26L19 9.27L13.18 14.14L14.18 20.02L12 17.77L9.82 20.02L10.82 14.14L5 9.27L10.91 8.26L12 2Z" />
                   </svg>

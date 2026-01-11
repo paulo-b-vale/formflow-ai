@@ -6,22 +6,33 @@ import Layout from '@/components/Layout'
 import AdminLayout from '@/components/AdminLayout'
 import { useRouter } from 'next/router'
 
+// Pages that should NOT have the standard Layout wrapper
+const noLayoutPages = ['/', '/login', '/register'];
+
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
   const isAdminRoute = router.pathname.startsWith('/admin');
+  const isNoLayoutPage = noLayoutPages.includes(router.pathname);
 
   return (
     <ThemeProvider>
       <AuthProvider>
-        <Layout>
-          {isAdminRoute ? (
+        {isNoLayoutPage ? (
+          // Full-page layouts (landing, login, register)
+          <Component {...pageProps} />
+        ) : isAdminRoute ? (
+          // Admin pages with admin layout
+          <Layout>
             <AdminLayout>
               <Component {...pageProps} />
             </AdminLayout>
-          ) : (
+          </Layout>
+        ) : (
+          // Regular pages with standard layout
+          <Layout>
             <Component {...pageProps} />
-          )}
-        </Layout>
+          </Layout>
+        )}
       </AuthProvider>
     </ThemeProvider>
   )

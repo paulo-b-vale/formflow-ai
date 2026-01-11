@@ -563,34 +563,34 @@ Regras importantes:
                 is_fallback = form_response_id.startswith('fallback_')
 
                 if is_fallback:
-                    completion_message = f"""🎉 **FORMULÁRIO PROCESSADO COM SUCESSO!**
+                    completion_message = f"""🎉 **FORM PROCESSED SUCCESSFULLY!**
 
-📋 **DETALHES:**
-• Formulário: {form_title}
-• Contexto: {context_title}
-• ID de Processamento: `{form_response_id}`
+📋 **DETAILS:**
+• Form: {form_title}
+• Context: {context_title}
+• Processing ID: `{form_response_id}`
 
-📊 **RESUMO:**
-• Campos preenchidos: {completed_fields}/{total_fields}
-• Status: Completo ✅
-• Data/Hora: {datetime.now().strftime('%d/%m/%Y às %H:%M')}
+📊 **SUMMARY:**
+• Fields completed: {completed_fields}/{total_fields}
+• Status: Complete ✅
+• Date/Time: {datetime.now().strftime('%Y-%m-%d at %H:%M')}
 
-⚠️ **Nota:** Seus dados foram processados com sucesso, mas podem haver atrasos na sincronização com o banco de dados principal.
-🔒 Suas respostas foram registradas e o formulário foi completado!"""
+⚠️ **Note:** Your data has been processed successfully, but there may be delays syncing with the main database.
+🔒 Your responses have been recorded and the form is complete!"""
                 else:
-                    completion_message = f"""🎉 **FORMULÁRIO ENVIADO COM SUCESSO!**
+                    completion_message = f"""🎉 **FORM SUBMITTED SUCCESSFULLY!**
 
-📋 **DETALHES DA SUBMISSÃO:**
-• Formulário: {form_title}
-• Contexto: {context_title}
-• ID da Submissão: `{form_response_id}`
+📋 **SUBMISSION DETAILS:**
+• Form: {form_title}
+• Context: {context_title}
+• Submission ID: `{form_response_id}`
 
-📊 **RESUMO:**
-• Campos preenchidos: {completed_fields}/{total_fields}
-• Status: Completo ✅
-• Data/Hora: {datetime.now().strftime('%d/%m/%Y às %H:%M')}
+📊 **SUMMARY:**
+• Fields completed: {completed_fields}/{total_fields}
+• Status: Complete ✅
+• Date/Time: {datetime.now().strftime('%Y-%m-%d at %H:%M')}
 
-🔒 Seus dados foram salvos com segurança. Obrigado por usar o assistente de formulários!"""
+🔒 Your data has been saved securely. Thank you for using the form assistant!"""
 
                 return await self._build_success_response(
                     completion_message,
@@ -643,7 +643,7 @@ What would you like to do?"""
     async def _generate_response_summary(self, detailed: bool = False) -> str:
         """Generate a clean, report-style summary of current responses."""
         if not self.form_template or not self.session_data.responses:
-            return "📝 Nenhuma resposta registrada ainda."
+            return "📝 No responses recorded yet."
 
         form_fields = self.form_template.get('fields', [])
 
@@ -671,24 +671,24 @@ What would you like to do?"""
                     missing_optional.append(field_label)
 
         # Build clean report format
-        summary_parts = ["📋 **RELATÓRIO DE RESPOSTAS**"]
+        summary_parts = ["📋 **RESPONSE SUMMARY**"]
 
         # Completed fields section
         if completed_fields:
-            summary_parts.append("\n✅ **CAMPOS PREENCHIDOS:**")
+            summary_parts.append("\n✅ **COMPLETED FIELDS:**")
             for field in completed_fields:
                 icon = "🔴" if field['required'] else "⚪"
                 summary_parts.append(f"{icon} **{field['label']}:** {field['value']}")
 
         # Missing required fields (if any)
         if missing_required:
-            summary_parts.append(f"\n❌ **CAMPOS OBRIGATÓRIOS FALTANDO:** ({len(missing_required)})")
+            summary_parts.append(f"\n❌ **MISSING REQUIRED FIELDS:** ({len(missing_required)})")
             for field_label in missing_required:
                 summary_parts.append(f"   • {field_label}")
 
         # Missing optional fields (if any, but only show count)
         if missing_optional:
-            summary_parts.append(f"\n⚪ **CAMPOS OPCIONAIS FALTANDO:** {len(missing_optional)}")
+            summary_parts.append(f"\n⚪ **MISSING OPTIONAL FIELDS:** {len(missing_optional)}")
 
         # Progress summary
         total_fields = len(form_fields)
@@ -696,8 +696,8 @@ What would you like to do?"""
         required_count = len([f for f in form_fields if f.get('required', False)])
         completed_required_count = len([f for f in completed_fields if f['required']])
 
-        summary_parts.append(f"\n📊 **PROGRESSO:** {completed_count}/{total_fields} campos completos")
-        summary_parts.append(f"📋 **OBRIGATÓRIOS:** {completed_required_count}/{required_count} ✅")
+        summary_parts.append(f"\n📊 **PROGRESS:** {completed_count}/{total_fields} fields complete")
+        summary_parts.append(f"📋 **REQUIRED:** {completed_required_count}/{required_count} ✅")
 
         return "\n".join(summary_parts)
 
@@ -787,21 +787,21 @@ Which field do they want to change? Respond with just the field_id, or "UNCLEAR"
                 return await self._build_success_response(confirmation_msg)
             
             # High confidence - proceed directly
-            welcome_parts.append(f"Olá! Estou aqui para ajudá-lo a preencher '{form_title}' para {context_title}.")
+            welcome_parts.append(f"Hello! I'm here to help you fill out '{form_title}' for {context_title}.")
 
             if form_description:
-                welcome_parts.append(f"Sobre este formulário: {form_description}")
+                welcome_parts.append(f"About this form: {form_description}")
 
             # Get form statistics
             total_fields = len(self.form_template.get('fields', []))
             required_fields = len([f for f in self.form_template.get('fields', []) if f.get('required', False)])
 
             if required_fields > 0:
-                welcome_parts.append(f"Este formulário tem {total_fields} campos no total, com {required_fields} campos obrigatórios.")
+                welcome_parts.append(f"This form has {total_fields} fields total, with {required_fields} required fields.")
             else:
-                welcome_parts.append(f"Este formulário tem {total_fields} campos, nenhum é obrigatório.")
+                welcome_parts.append(f"This form has {total_fields} fields, none are required.")
 
-            welcome_parts.append("Vou guiá-lo através de cada campo passo a passo. Vamos começar!")
+            welcome_parts.append("I'll guide you through each field step by step. Let's begin!")
             
             welcome_message = "\n\n".join(welcome_parts)
             
@@ -814,7 +814,7 @@ Which field do they want to change? Respond with just the field_id, or "UNCLEAR"
                 self.session_data.current_field = next_question_field.get("field_id")
                 
                 question_prompt = await self._get_field_prompt(next_question_field)
-                full_message = f"{welcome_message}\n\nPergunta 1:\n{question_prompt}"
+                full_message = f"{welcome_message}\n\nQuestion 1:\n{question_prompt}"
                 
                 return await self._build_success_response(full_message)
             else:
@@ -936,12 +936,12 @@ Which field do they want to change? Respond with just the field_id, or "UNCLEAR"
                     if not validation_result["is_valid"]:
                         # Handle validation failure
                         field_label = current_field.get('label', current_field_id)
-                        error_parts = [f"❌ Problema com {field_label}:"]
+                        error_parts = [f"❌ Issue with {field_label}:"]
 
                         if validation_result.get("suggestions"):
                             error_parts.extend([f"💡 {suggestion}" for suggestion in validation_result["suggestions"]])
 
-                        error_parts.append("\n🔄 Por favor, tente novamente:")
+                        error_parts.append("\n🔄 Please try again:")
                         error_parts.append(await self._get_field_prompt(current_field))
 
                         error_message = "\n".join(error_parts)
@@ -953,13 +953,13 @@ Which field do they want to change? Respond with just the field_id, or "UNCLEAR"
 
                 # Show summary of extracted fields if more than one
                 if len(acknowledgment_parts) > 1:
-                    acknowledgment = f"🎯 Informações capturadas da sua mensagem:\n\n{acknowledgment}"
+                    acknowledgment = f"🎯 Information captured from your message:\n\n{acknowledgment}"
             else:
                 # No fields were extracted or processed
                 if current_field_id:
                     # Fallback: save user message for current field
                     self.session_data.responses[current_field_id] = user_message
-                    acknowledgment = "✅ Registrei sua resposta."
+                    acknowledgment = "✅ Response recorded."
                 else:
                     # No current field, try to find any unanswered field
                     all_fields = self.form_template.get('fields', [])
@@ -967,10 +967,10 @@ Which field do they want to change? Respond with just the field_id, or "UNCLEAR"
                         field_id = field.get('field_id')
                         if field_id and field_id not in self.session_data.responses:
                             self.session_data.responses[field_id] = user_message
-                            acknowledgment = "✅ Registrei sua resposta."
+                            acknowledgment = "✅ Response recorded."
                             break
                     else:
-                        acknowledgment = "✅ Obrigado pela sua resposta."
+                        acknowledgment = "✅ Thank you for your response."
             
             # Get the next question
             next_question_field = self._get_next_question()
@@ -1004,18 +1004,18 @@ Which field do they want to change? Respond with just the field_id, or "UNCLEAR"
                 # Build clean completion summary
                 summary_parts = [
                     acknowledgment,
-                    "\n🎉 **FORMULÁRIO COMPLETO!**"
+                    "\n🎉 **FORM COMPLETE!**"
                 ]
 
                 summary_parts.append(await self._generate_response_summary(detailed=False))
 
                 summary_parts.extend([
                     "\n" + "═" * 40,
-                    "🚀 **PRONTO PARA ENVIAR?**",
+                    "🚀 **READY TO SUBMIT?**",
                     "",
-                    "✅ Digite **'sim'** ou **'enviar'** para finalizar",
-                    "❌ Digite **'não'** para fazer alterações",
-                    "📋 Digite **'revisar'** para ver detalhes"
+                    "✅ Type **'yes'** or **'submit'** to finalize",
+                    "❌ Type **'no'** to make changes",
+                    "📋 Type **'review'** to see details"
                 ])
 
                 confirmation_message = "\n".join(summary_parts)

@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { ClipboardIcon, CheckIcon } from '@heroicons/react/24/outline';
 import { MessageMarkdown } from './MessageMarkdown';
 
 interface MessageBubbleProps {
@@ -33,19 +31,14 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isLast = 
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.2 }}
-      className={`flex gap-4 py-6 group ${isUser ? 'flex-row-reverse' : 'flex-row'}`}
-    >
+    <div className={`flex gap-4 py-6 group animate-fade-in ${isUser ? 'flex-row-reverse' : 'flex-row'}`}>
       {/* Avatar */}
       {isUser ? (
-        <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-sm font-medium flex-shrink-0">
+        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-slate-600 to-slate-700 flex items-center justify-center text-white text-sm font-medium flex-shrink-0 shadow-md">
           U
         </div>
       ) : (
-        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 flex items-center justify-center flex-shrink-0">
+        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-slate-600 via-blue-500 to-teal-500 flex items-center justify-center flex-shrink-0 shadow-md">
           <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 2L13.09 8.26L19 9.27L13.18 14.14L14.18 20.02L12 17.77L9.82 20.02L10.82 14.14L5 9.27L10.91 8.26L12 2Z" />
           </svg>
@@ -57,7 +50,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isLast = 
         <div
           className={`
             ${isUser
-              ? 'bg-primary text-primary-foreground rounded-3xl rounded-tr-lg px-5 py-3 max-w-[85%] inline-block'
+              ? 'bg-gradient-to-r from-slate-700 to-slate-800 text-white rounded-2xl rounded-tr-md px-5 py-3 max-w-[85%] inline-block shadow-lg'
               : 'text-foreground max-w-full'
             }
           `}
@@ -82,18 +75,25 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isLast = 
           {!isUser && (
             <button
               onClick={handleCopy}
-              className="p-1.5 rounded-md opacity-0 group-hover:opacity-100 hover:bg-muted transition-all"
+              className="p-1.5 rounded-lg opacity-0 group-hover:opacity-100 hover:bg-muted transition-all flex items-center gap-1"
               title="Copy message"
             >
               {isCopied ? (
-                <CheckIcon className="w-4 h-4 text-green-500" />
+                <>
+                  <svg className="w-4 h-4 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span className="text-xs text-teal-500">Copied!</span>
+                </>
               ) : (
-                <ClipboardIcon className="w-4 h-4 text-muted-foreground" />
+                <svg className="w-4 h-4 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
               )}
             </button>
           )}
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 };
