@@ -1,0 +1,36 @@
+# app/requirements.txt
+fastapi>=0.100.0
+uvicorn[standard]
+motor
+pydantic[email]
+python-jose[cryptography]
+passlib[bcrypt]==1.7.4
+bcrypt==4.0.1
+python-multipart
+langchain
+langchain-google-genai
+langgraph
+langsmith
+aiofiles
+python-dotenv
+redis
+pydantic-settings
+pydub
+boto3
+
+# Async Task Processing
+celery[redis]==5.3.4
+flower==2.0.1
+
+# Testing libraries
+pytest
+pytest-asyncio
+httpx
+
+# Code Quality Tools
+black
+isort
+flake8
+mypy
+pre-commit
+bandit

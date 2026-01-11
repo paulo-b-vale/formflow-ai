@@ -44,7 +44,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     try {
       // Check if identifier looks like a phone number (contains digits and starts with +)
       const isPhoneLogin = identifier.startsWith('+') || /^\d+$/.test(identifier.replace(/[^\d]/g, ''));
-      
+
       let response;
       if (isPhoneLogin) {
         // Phone login
@@ -57,18 +57,24 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         const formData = new URLSearchParams();
         formData.append('username', identifier);
         formData.append('password', password);
-        
+
         response = await api.post('/auth/login', formData, {
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         });
       }
 
-      const { access_token } = response.data.tokens;
-      const userData = response.data.user;
+      // Handle both structured response and flat response
+      const loginData = response.data;
+      const accessToken = loginData.tokens?.access_token || loginData.access_token;
+      const userData = loginData.user || loginData;
 
-      localStorage.setItem('token', access_token);
+      if (!accessToken) {
+        throw new Error('Access token not found in response');
+      }
+
+      localStorage.setItem('token', accessToken);
       setUser(userData);
-      
+
       // Redirect based on role
       if (userData.role === 'admin') {
         router.push('/admin');

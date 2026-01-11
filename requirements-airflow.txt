@@ -1,0 +1,17 @@
+# Airflow Requirements (Separate for Docker container)
+# Install with: pip install -r requirements-airflow.txt
+
+# Core Airflow
+apache-airflow==2.8.1
+
+# Airflow Providers
+apache-airflow-providers-celery==3.6.0
+apache-airflow-providers-redis==3.6.0
+apache-airflow-providers-http==4.7.0
+
+# Database (for Airflow metadata)
+apache-airflow-providers-postgres==5.10.0
+
+# Constraints to avoid conflicts
+# Use Airflow's constraint file for Python 3.12:
+# pip install "apache-airflow==2.8.1" --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-2.8.1/constraints-3.12.txt"

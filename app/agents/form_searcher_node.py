@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from app.utils.observability import ObservabilityMixin
 from app.utils.langchain_utils import get_gemini_llm
 from app.config.settings import settings
-from app.agents.state import FormState
+from app.agents.core.state import AgentState as FormState
 from app.utils.confidence_system import ConfidenceManager, ConfidenceResult
 import json
 

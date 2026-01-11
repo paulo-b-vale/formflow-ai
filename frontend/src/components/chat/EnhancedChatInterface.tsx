@@ -27,14 +27,13 @@ const EnhancedChatInterface: FC = () => {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [activeConversationId, setActiveConversationId] = useState<string | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Initialize with first conversation
   useEffect(() => {
     createNewConversation();
   }, []);
 
-  // Auto-scroll to bottom when messages change
   useEffect(() => {
     scrollToBottom();
   }, [conversations, activeConversationId]);
@@ -52,12 +51,12 @@ const EnhancedChatInterface: FC = () => {
           id: uuidv4(),
           role: 'assistant',
           content:
-            "Hello! I am your AI assistant. How can I help you fill out a form today? For example, you can ask for a 'construction form', 'permit application', or describe what form you need.",
+            "Hello! I'm your AI form assistant. I can help you create, fill out, or understand forms. What would you like to work on today?",
           timestamp: new Date(),
         },
       ],
       sessionId: `session_${Date.now()}`,
-      lastMessage: 'Hello! I am your AI assistant...',
+      lastMessage: 'Hello! I\'m your AI form assistant...',
       timestamp: new Date(),
     };
 
@@ -83,7 +82,6 @@ const EnhancedChatInterface: FC = () => {
     const activeConv = getActiveConversation();
     if (!activeConv) return;
 
-    // Add user message
     const userMessage: Message = {
       id: uuidv4(),
       role: 'user',
@@ -101,7 +99,6 @@ const EnhancedChatInterface: FC = () => {
     setIsLoading(true);
 
     try {
-      // Handle file uploads if present
       let fileIds: string[] = [];
       if (files && files.length > 0) {
         const formData = new FormData();
@@ -109,26 +106,22 @@ const EnhancedChatInterface: FC = () => {
           formData.append('files', file);
         });
 
-        // Upload files and get file IDs
         try {
           const uploadResponse = await api.post('/files/chat/upload', formData, {
             headers: { 'Content-Type': 'multipart/form-data' },
           });
           fileIds = uploadResponse.data.files?.map((f: any) => f.file_id) || [];
-          console.log('Files uploaded successfully:', fileIds);
         } catch (uploadError) {
           console.error('File upload failed:', uploadError);
         }
       }
 
-      // Send message to backend with file IDs
       const response = await api.post('/enhanced_conversation/message', {
         session_id: activeConv.sessionId,
         user_message: messageText,
         file_ids: fileIds.length > 0 ? fileIds : undefined,
       });
 
-      // Add assistant response
       const assistantMessage: Message = {
         id: uuidv4(),
         role: 'assistant',
@@ -176,7 +169,7 @@ const EnhancedChatInterface: FC = () => {
   const activeConversation = getActiveConversation();
 
   return (
-    <div className="flex h-screen bg-gray-50 dark:bg-gray-950">
+    <div className="flex h-screen bg-background">
       {/* Sidebar */}
       <ChatSidebar
         conversations={conversations}
@@ -184,28 +177,41 @@ const EnhancedChatInterface: FC = () => {
         onSelectConversation={setActiveConversationId}
         onNewConversation={createNewConversation}
         onDeleteConversation={handleDeleteConversation}
+        isOpen={sidebarOpen}
+        onToggle={() => setSidebarOpen(!sidebarOpen)}
       />
 
-      {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col">
+      {/* Main Chat Area - Gemini Style */}
+      <div className="flex-1 flex flex-col min-w-0">
         {/* Header */}
-        <div className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-                {activeConversation?.title || 'AI Form Assistant'}
-              </h1>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                Intelligent form filling assistance powered by AI
-              </p>
+        <div className="h-16 border-b border-border flex items-center justify-between px-6 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+          <div className="flex items-center gap-3">
+            {!sidebarOpen && (
+              <button
+                onClick={() => setSidebarOpen(true)}
+                className="p-2 hover:bg-muted rounded-lg transition-colors"
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              </button>
+            )}
+            <div className="flex items-center gap-2">
+              {/* Gemini-style sparkle icon */}
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 flex items-center justify-center">
+                <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2L13.09 8.26L19 9.27L13.18 14.14L14.18 20.02L12 17.77L9.82 20.02L10.82 14.14L5 9.27L10.91 8.26L12 2Z" />
+                </svg>
+              </div>
+              <span className="font-semibold text-lg">FlowForm AI</span>
             </div>
-            <ThemeToggle />
           </div>
+          <ThemeToggle />
         </div>
 
-        {/* Messages Container */}
-        <div className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-950 p-6">
-          <div className="max-w-4xl mx-auto space-y-4">
+        {/* Messages Container - Centered like Gemini */}
+        <div className="flex-1 overflow-y-auto">
+          <div className="max-w-3xl mx-auto py-8 px-4">
             {activeConversation?.messages.map((message, index) => (
               <MessageBubble
                 key={message.id}
@@ -213,15 +219,19 @@ const EnhancedChatInterface: FC = () => {
                 isLast={index === activeConversation.messages.length - 1}
               />
             ))}
+
+            {/* Loading indicator - Gemini style */}
             {isLoading && (
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center text-white font-semibold">
-                  AI
+              <div className="flex gap-4 py-6">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 flex items-center justify-center flex-shrink-0">
+                  <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2L13.09 8.26L19 9.27L13.18 14.14L14.18 20.02L12 17.77L9.82 20.02L10.82 14.14L5 9.27L10.91 8.26L12 2Z" />
+                  </svg>
                 </div>
-                <div className="flex gap-1">
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" />
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-100" />
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-200" />
+                <div className="flex items-center gap-1.5 pt-2">
+                  <div className="w-2 h-2 bg-muted-foreground/40 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                  <div className="w-2 h-2 bg-muted-foreground/40 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                  <div className="w-2 h-2 bg-muted-foreground/40 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
                 </div>
               </div>
             )}
@@ -229,7 +239,7 @@ const EnhancedChatInterface: FC = () => {
           </div>
         </div>
 
-        {/* Chat Input */}
+        {/* Chat Input - Centered at bottom */}
         <ChatInput onSendMessage={handleSendMessage} isLoading={isLoading} />
       </div>
     </div>

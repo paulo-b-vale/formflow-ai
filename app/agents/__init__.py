@@ -1,6 +1,6 @@
 # app/agents/__init___fixed.py
 from langgraph.graph import StateGraph, END
-from app.agents.state import FormState
+from app.agents.core.state import AgentState as FormState
 from app.agents.enhanced_form_filler_agent import EnhancedFormFillerAgent
 from app.agents.enhanced_form_predictor_node import EnhancedFormPredictorNode
 from app.sessions.session_manager import SessionManager, SessionData, SessionState

@@ -103,8 +103,8 @@ class FormResponseResponse(FormResponseBase):
     reviewed_at: Optional[datetime] = None
     reviewed_by: Optional[str] = None
     review_notes: Optional[str] = None
-    created_at: datetime
-    updated_at: datetime
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
     class Config:
         populate_by_name = True

@@ -7,9 +7,11 @@ services:
     ports:
       - "8002:8000"
     volumes:
-      - .:/app
+      - ./app:/app/app
     env_file:
       - .env
+    environment:
+      - PYTHONPATH=/app
     depends_on:
       redis:
         condition: service_started
@@ -17,7 +19,7 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
-# Frontend Web Application
+  # Frontend Web Application
   frontend:
     build:
       context: ./frontend
@@ -34,6 +36,7 @@ services:
       - app
     restart: unless-stopped  
 
+  # Redis - Used by Celery and Airflow
   redis:
     image: redis:7.2-alpine
     ports:
@@ -42,6 +45,7 @@ services:
       - redis_data:/data
     restart: unless-stopped
 
+  # Minio - S3 Compatible Storage
   minio:
     image: minio/minio:RELEASE.2025-07-23T15-54-02Z
     ports:
@@ -60,6 +64,7 @@ services:
       retries: 3
     restart: unless-stopped
 
+  # Minio Bucket Creation
   create-buckets:
     image: minio/mc
     depends_on:
@@ -87,7 +92,155 @@ services:
     stdin_open: true
     tty: true
 
+  # Celery Worker - Async task processing
+  celery-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: celery -A app.celery_app worker --loglevel=info -Q forms,agents,reports,default
+    volumes:
+      - ./app:/app/app
+    env_file:
+      - .env
+    environment:
+      - PYTHONPATH=/app
+    depends_on:
+      - redis
+      - app
+    restart: unless-stopped
+
+  # Celery Beat - Scheduled tasks
+  celery-beat:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: celery -A app.celery_app beat --loglevel=info
+    volumes:
+      - ./app:/app/app
+    env_file:
+      - .env
+    environment:
+      - PYTHONPATH=/app
+    depends_on:
+      - redis
+      - celery-worker
+    restart: unless-stopped
+
+  # Flower - Celery monitoring UI
+  flower:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: celery -A app.celery_app flower --port=5555
+    ports:
+      - "5555:5555"
+    volumes:
+      - ./app:/app/app
+    env_file:
+      - .env
+    environment:
+      - PYTHONPATH=/app
+    depends_on:
+      - redis
+      - celery-worker
+    restart: unless-stopped
+
+  # Postgres - Airflow metadata database
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "airflow"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # Airflow Webserver
+  airflow-webserver:
+    build:
+      context: ./airflow
+      dockerfile: Dockerfile
+    command: >
+      bash -c "
+      airflow db init &&
+      airflow users create --username admin --firstname Admin --lastname User --role Admin --email admin@example.com --password admin &&
+      airflow webserver
+      "
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+    env_file:
+      - .env
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=CeleryExecutor
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
+      - AIRFLOW__CELERY__RESULT_BACKEND=db+postgresql://airflow:airflow@postgres/airflow
+      - AIRFLOW__CELERY__BROKER_URL=redis://redis:6379/0
+      - AIRFLOW__CORE__FERNET_KEY=${FERNET_KEY}
+      - AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION=true
+      - AIRFLOW__CORE__LOAD_EXAMPLES=false
+      - AIRFLOW__API__AUTH_BACKENDS=airflow.api.auth.backend.basic_auth,airflow.api.auth.backend.session
+    depends_on:
+      - postgres
+      - redis
+    restart: unless-stopped
+
+  # Airflow Scheduler
+  airflow-scheduler:
+    build:
+      context: ./airflow
+      dockerfile: Dockerfile
+    command: airflow scheduler
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+    env_file:
+      - .env
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=CeleryExecutor
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
+      - AIRFLOW__CELERY__RESULT_BACKEND=db+postgresql://airflow:airflow@postgres/airflow
+      - AIRFLOW__CELERY__BROKER_URL=redis://redis:6379/0
+      - AIRFLOW__CORE__FERNET_KEY=${FERNET_KEY}
+      - AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION=true
+      - AIRFLOW__CORE__LOAD_EXAMPLES=false
+    depends_on:
+      - postgres
+      - redis
+    restart: unless-stopped
+
+  # Airflow Worker (uses Celery)
+  airflow-worker:
+    build:
+      context: ./airflow
+      dockerfile: Dockerfile
+    command: airflow celery worker
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+    env_file:
+      - .env
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=CeleryExecutor
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
+      - AIRFLOW__CELERY__RESULT_BACKEND=db+postgresql://airflow:airflow@postgres/airflow
+      - AIRFLOW__CELERY__BROKER_URL=redis://redis:6379/0
+      - AIRFLOW__CORE__FERNET_KEY=${FERNET_KEY}
+    depends_on:
+      - postgres
+      - redis
+    restart: unless-stopped
+
 volumes:
   redis_data:
   minio_data:
   whatsapp_session:
+  postgres_data:

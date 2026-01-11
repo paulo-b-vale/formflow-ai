@@ -19,6 +19,7 @@ class Settings(BaseSettings):
     GEMINI_API_KEY: str
     UPLOAD_DIRECTORY: str = "/app/uploads"
     MAX_FILE_SIZE: int = 50 * 1024 * 1024  # 50MB default
+    FERNET_KEY: str = ""  # For encryption
 
     # LangSmith tracing settings
     LANGCHAIN_TRACING_V2: str = "false"

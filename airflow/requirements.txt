@@ -1,0 +1,2 @@
+# airflow/requirements.txt
+apache-airflow[postgres,celery]==2.8.1

@@ -134,43 +134,77 @@ class FormResponseManager:
                     {"respondent_name": search_regex},
                     {"responses": {"$elemMatch": search_regex}}
                 ]
-        
+
         responses = await self.db.form_responses.find(query).sort("submitted_at", -1).to_list(length=100)
-        return [FormResponseResponse.model_validate(r) for r in responses]
+
+        # Convert ObjectId fields to strings for validation
+        processed_responses = []
+        for r in responses:
+            processed_r = r.copy()
+            # Convert ObjectId fields to strings
+            if 'form_template_id' in processed_r and processed_r['form_template_id']:
+                processed_r['form_template_id'] = str(processed_r['form_template_id'])
+            if 'context_id' in processed_r and processed_r['context_id']:
+                processed_r['context_id'] = str(processed_r['context_id'])
+            if 'respondent_id' in processed_r and processed_r['respondent_id']:
+                processed_r['respondent_id'] = str(processed_r['respondent_id'])
+
+            processed_responses.append(processed_r)
+
+        return [FormResponseResponse.model_validate(r) for r in processed_responses]
 
     async def get_by_id(self, response_id: str, current_user: Dict[str, Any]) -> FormResponseResponse:
         if not ObjectId.is_valid(response_id):
             raise ValidationError("Invalid response ID.")
-        
+
         response = await self.db.form_responses.find_one({"_id": ObjectId(response_id)})
         if not response:
             raise NotFoundError("Form response not found.")
-            
+
         if current_user["role"] != UserRole.ADMIN.value and response["respondent_id"] != current_user["id"]:
             raise PermissionError("You do not have permission to view this response.")
-            
-        return FormResponseResponse.model_validate(response)
+
+        # Convert ObjectId fields to strings for validation
+        processed_response = response.copy()
+        if 'form_template_id' in processed_response and processed_response['form_template_id']:
+            processed_response['form_template_id'] = str(processed_response['form_template_id'])
+        if 'context_id' in processed_response and processed_response['context_id']:
+            processed_response['context_id'] = str(processed_response['context_id'])
+        if 'respondent_id' in processed_response and processed_response['respondent_id']:
+            processed_response['respondent_id'] = str(processed_response['respondent_id'])
+
+        return FormResponseResponse.model_validate(processed_response)
 
     async def review(self, response_id: str, review_data: FormResponseUpdate, current_user: Dict[str, Any]) -> FormResponseResponse:
         if current_user["role"] != UserRole.ADMIN.value:
             raise PermissionError("Only administrators can review responses.")
-        
+
         update_data = {
             "status": review_data.status,
             "review_notes": review_data.review_notes,
             "reviewed_by": current_user["id"],
             "reviewed_at": datetime.utcnow()
         }
-        
+
         result = await self.db.form_responses.update_one(
             {"_id": ObjectId(response_id)},
             {"$set": update_data}
         )
         if result.matched_count == 0:
             raise NotFoundError("Form response not found.")
-            
+
         updated = await self.db.form_responses.find_one({"_id": ObjectId(response_id)})
-        return FormResponseResponse.model_validate(updated)
+
+        # Convert ObjectId fields to strings for validation
+        processed_updated = updated.copy()
+        if 'form_template_id' in processed_updated and processed_updated['form_template_id']:
+            processed_updated['form_template_id'] = str(processed_updated['form_template_id'])
+        if 'context_id' in processed_updated and processed_updated['context_id']:
+            processed_updated['context_id'] = str(processed_updated['context_id'])
+        if 'respondent_id' in processed_updated and processed_updated['respondent_id']:
+            processed_updated['respondent_id'] = str(processed_updated['respondent_id'])
+
+        return FormResponseResponse.model_validate(processed_updated)
 
 class FormsService(BaseService):
     def __init__(self):

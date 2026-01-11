@@ -34,51 +34,47 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isLast = 
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-      className={`flex gap-3 ${isUser ? 'flex-row-reverse' : 'flex-row'} group mb-6`}
+      transition={{ duration: 0.2 }}
+      className={`flex gap-4 py-6 group ${isUser ? 'flex-row-reverse' : 'flex-row'}`}
     >
       {/* Avatar */}
-      <div
-        className={`
-          flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold
-          ${isUser ? 'bg-blue-600' : 'bg-gradient-to-br from-purple-600 to-blue-600'}
-        `}
-      >
-        {isUser ? 'U' : 'AI'}
-      </div>
+      {isUser ? (
+        <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-sm font-medium flex-shrink-0">
+          U
+        </div>
+      ) : (
+        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 flex items-center justify-center flex-shrink-0">
+          <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2L13.09 8.26L19 9.27L13.18 14.14L14.18 20.02L12 17.77L9.82 20.02L10.82 14.14L5 9.27L10.91 8.26L12 2Z" />
+          </svg>
+        </div>
+      )}
 
       {/* Message Content */}
-      <div className={`flex-1 ${isUser ? 'max-w-[80%]' : 'max-w-[85%]'}`}>
+      <div className={`flex-1 min-w-0 ${isUser ? 'flex justify-end' : ''}`}>
         <div
           className={`
-            rounded-2xl px-4 py-3
-            ${
-              isUser
-                ? 'bg-blue-600 text-white ml-auto'
-                : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-700'
+            ${isUser
+              ? 'bg-primary text-primary-foreground rounded-3xl rounded-tr-lg px-5 py-3 max-w-[85%] inline-block'
+              : 'text-foreground max-w-full'
             }
           `}
         >
           {isUser ? (
             <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
           ) : (
-            <div className="text-sm leading-relaxed">
+            <div className="text-sm leading-relaxed prose prose-sm dark:prose-invert max-w-none">
               <MessageMarkdown content={message.content} />
             </div>
           )}
         </div>
 
-        {/* Actions and Timestamp */}
-        <div
-          className={`
-            flex items-center gap-2 mt-1 px-2
-            ${isUser ? 'justify-end' : 'justify-start'}
-          `}
-        >
+        {/* Actions row */}
+        <div className={`flex items-center gap-2 mt-2 ${isUser ? 'justify-end' : 'justify-start'}`}>
           {message.timestamp && (
-            <span className="text-xs text-gray-500 dark:text-gray-400">
+            <span className="text-xs text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity">
               {formatTime(message.timestamp)}
             </span>
           )}
@@ -86,13 +82,13 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isLast = 
           {!isUser && (
             <button
               onClick={handleCopy}
-              className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
+              className="p-1.5 rounded-md opacity-0 group-hover:opacity-100 hover:bg-muted transition-all"
               title="Copy message"
             >
               {isCopied ? (
                 <CheckIcon className="w-4 h-4 text-green-500" />
               ) : (
-                <ClipboardIcon className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+                <ClipboardIcon className="w-4 h-4 text-muted-foreground" />
               )}
             </button>
           )}

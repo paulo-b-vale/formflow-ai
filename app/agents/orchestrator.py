@@ -8,7 +8,7 @@ from typing import Dict, Any
 
 from langgraph.graph import StateGraph, END
 
-from .types import FormState, NodeResponse
+from .types import FormState
 from .base import state_get
 from .nodes import RouterNode, ClarificationNode, FormFillerNode, ErrorNode
 from .enhanced_form_predictor_node import EnhancedFormPredictorNode
@@ -122,10 +122,16 @@ class ConversationGraphOrchestrator(ObservabilityMixin):
                 # Call the node's run method
                 response = await node_instance.run(state)
 
-                # Convert NodeResponse to dict and merge with original state for LangGraph compatibility
-                if isinstance(response, NodeResponse):
+                # Handle response - check if it's a dict (NodeResponse is a TypedDict, so it's a dict)
+                # Note: We cannot use isinstance() with TypedDict in Python 3.11+
+                if isinstance(response, dict):
+                    # Check if response has a to_dict method (custom class)
+                    if hasattr(response, 'to_dict'):
+                        response_dict = response.to_dict()
+                    else:
+                        response_dict = response
+                    
                     # Merge original state with response to preserve session_id and other fields
-                    response_dict = response.to_dict()
                     if hasattr(state, 'get') or hasattr(state, '__getitem__'):
                         # Preserve essential fields from original state
                         merged_response = {

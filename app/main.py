@@ -12,6 +12,7 @@ from app.routers import (
     enhanced_conversation_router,
     analytics_router,
     openwebui_adapter,
+    agent_router,
 )
 from app.sessions.session_manager import RedisManager, SessionManager
 from app.services.service_initializer import initialize_all_services
@@ -88,6 +89,9 @@ app.include_router(
 )
 app.include_router(
     openwebui_adapter.router, prefix="/api/v1", tags=["openwebui"]
+)
+app.include_router(
+    agent_router.router, prefix="/agents", tags=["agents"]
 )
 
 

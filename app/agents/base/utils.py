@@ -2,9 +2,11 @@
 Utility functions for state management and common operations.
 """
 
-from typing import Any, Union
+from typing import Any, Union, Dict
 import logging
-from ..types import StateType
+
+# Type alias
+StateType = Dict[str, Any]
 
 logger = logging.getLogger(__name__)
 

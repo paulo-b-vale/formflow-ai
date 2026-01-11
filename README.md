@@ -2,8 +2,6 @@
 
 <div align="center">
 
-![FormFlow AI Logo](docs/images/logo.png)
-
 **An AI-powered conversational assistant that automates form filling, analysis, and report generation using advanced language models.**
 
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
@@ -11,36 +9,29 @@
 [![Next.js](https://img.shields.io/badge/Next.js-14+-black.svg)](https://nextjs.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-[📸 Screenshots](#-screenshots) • [📚 Documentation](#documentation) • [🚀 Quick Start](#-quick-start) • [🏗️ Architecture](#️-architecture)
+[🎬 Demos](#-demo-videos) • [🌟 Features](#-key-features) • [🚀 Quick Start](#-quick-start) • [🏗️ Architecture](#️-architecture)
 
 </div>
 
 ---
 
+## 🎬 Demo Videos
 
-## 📸 Screenshots
-
+### Admin Dashboard
 <div align="center">
 
-### User Dashboard
-![User Dashboard](image/user%20dashboard.png)
-*Clean and intuitive user dashboard for managing your forms and conversations*
+![Admin Dashboard Demo](frontend/public/admin_demo.webp)
 
-### Register Page
-![Register Page](image/register%20page.png)
-*Simple registration process to get started with FormFlow AI*
+*Admin panel walkthrough - Users, Contexts, Forms, Responses and Assignments*
 
-### Conversational Chat
-![Chat Interface](image/chat.png)
-*Natural language conversation for seamless form completion*
+</div>
 
-### Question Answering
-![Question Answering](image/question%20answering.png)
-*AI intelligently processes and validates your responses in real-time*
+### AI Chat Form Filling
+<div align="center">
 
-### Final Answer Preview
-![Question Final Answer](image/question%20final%20answer.png)
-*Review and confirm your completed form before submission*
+![Chat Demo](frontend/public/chat_demo.webp)
+
+*Conversational form filling - AI extracts data from natural language and fills incident reports*
 
 </div>
 
@@ -417,11 +408,8 @@ pytest tests/ -m integration   # Integration tests only
 
 ## 📚 Documentation
 
-- 📖 [Architecture Guide](docs/ARCHITECTURE.md) - System design and components
-- 🚀 [Deployment Guide](docs/DEPLOYMENT.md) - Production deployment instructions
-- 🔌 [API Documentation](docs/API_DOCUMENTATION.md) - Complete API reference
-- 🤖 [Agent System Guide](ENHANCED_AGENTS_GUIDE.md) - AI agent implementation
-- 💼 [Contributing Guide](docs/CONTRIBUTING.md) - How to contribute
+- 📖 **API Documentation**: Available at `http://localhost:8002/docs` after starting the server
+- 🔌 **OpenAPI Schema**: Available at `http://localhost:8002/openapi.json`
 
 ---
 

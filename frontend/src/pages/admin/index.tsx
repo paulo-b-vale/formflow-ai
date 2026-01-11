@@ -1,49 +1,105 @@
-import { useState, useEffect } from 'react';
-import api from '@/lib/api';
 import withAdminAuth from '@/components/withAdminAuth';
-import { WorkContext } from '@/types';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
+import { Users, FileText, Settings, AreaChart, LayoutGrid } from 'lucide-react';
+import { motion } from 'framer-motion';
 
-function ContextsPage() {
-  const [contexts, setContexts] = useState<WorkContext[]>([]);
+const stats = [
+  { name: 'Total Users', value: '12', icon: Users, color: 'text-blue-500', bg: 'bg-blue-500/10' },
+  { name: 'Active Forms', value: '8', icon: FileText, color: 'text-purple-500', bg: 'bg-purple-500/10' },
+  { name: 'Work Contexts', value: '5', icon: LayoutGrid, color: 'text-pink-500', bg: 'bg-pink-500/10' },
+  { name: 'Total Responses', value: '154', icon: AreaChart, color: 'text-orange-500', bg: 'bg-orange-500/10' },
+];
 
-  useEffect(() => {
-    const fetchContexts = async () => {
-      try {
-        const response = await api.get('/forms-management/contexts');
-        setContexts(response.data);
-      } catch (error) {
-        console.error('Failed to fetch contexts:', error);
-      }
-    };
-    fetchContexts();
-  }, []);
+const quickActions = [
+  { name: 'Manage Users', href: '/admin/users', icon: Users, description: 'View and edit registered users' },
+  { name: 'Work Contexts', href: '/admin/contexts', icon: LayoutGrid, description: 'Manage departments and teams' },
+  { name: 'Form Templates', href: '/admin/forms', icon: FileText, description: 'Create and edit AI forms' },
+  { name: 'Settings', href: '/admin/settings', icon: Settings, description: 'Global application configuration' },
+];
 
+function AdminDashboard() {
   return (
-    <div>
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-3xl font-bold">Context Management</h1>
-        <Link href="/admin/contexts/new" className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">
-          Create New Context
-        </Link>
+    <div className="max-w-6xl mx-auto py-8 px-4">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold tracking-tight">Admin Dashboard</h1>
+        <p className="text-muted-foreground mt-1">System overview and management console</p>
       </div>
-      <div className="bg-white p-4 rounded shadow">
-        {contexts.length > 0 ? (
-          <ul>
-            {contexts.map((context) => (
-              <li key={context.id} className="border-b last:border-b-0 py-2">
-                <h3 className="font-bold">{context.title}</h3>
-                <p className="text-sm text-gray-600">{context.description}</p>
-                <span className="text-xs bg-gray-200 px-2 py-1 rounded-full">{context.context_type}</span>
-              </li>
+
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+        {stats.map((stat, index) => (
+          <motion.div
+            key={stat.name}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.1 }}
+          >
+            <Card className="border-0 shadow-sm bg-card hover:shadow-md transition-shadow">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-4">
+                  <div className={`p-3 rounded-xl ${stat.bg}`}>
+                    <stat.icon className={`w-6 h-6 ${stat.color}`} />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">{stat.name}</p>
+                    <h3 className="text-2xl font-bold">{stat.value}</h3>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Quick Actions */}
+        <section>
+          <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+            <Settings className="w-5 h-5 text-primary" />
+            Quick Actions
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {quickActions.map((action) => (
+              <Link key={action.name} href={action.href}>
+                <Card className="h-full hover:bg-muted/30 transition-colors cursor-pointer border-border/50 shadow-sm">
+                  <CardContent className="p-4 flex items-start gap-4">
+                    <div className="mt-1 p-2 rounded-lg bg-background shadow-inner">
+                      <action.icon className="w-5 h-5 text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-sm">{action.name}</h3>
+                      <p className="text-xs text-muted-foreground mt-0.5">{action.description}</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
             ))}
-          </ul>
-        ) : (
-          <p>No contexts found.</p>
-        )}
+          </div>
+        </section>
+
+        {/* System Health / Placeholder */}
+        <section>
+          <h2 className="text-xl font-bold mb-4">System Status</h2>
+          <Card className="bg-gradient-to-br from-primary/5 to-purple-500/5 border-primary/10">
+            <CardContent className="p-8 flex flex-col items-center justify-center text-center">
+              <div className="w-16 h-16 rounded-full bg-green-500/10 flex items-center justify-center mb-4">
+                <div className="w-3 h-3 rounded-full bg-green-500 animate-pulse" />
+              </div>
+              <h3 className="font-bold text-lg">All Systems Operational</h3>
+              <p className="text-sm text-muted-foreground mt-2 max-w-sm">
+                Backend API, Database, and AI services are running smoothly.
+              </p>
+              <Button variant="outline" className="mt-6 rounded-full" size="sm">
+                View Detailed Logs
+              </Button>
+            </CardContent>
+          </Card>
+        </section>
       </div>
     </div>
   );
 }
 
-export default withAdminAuth(ContextsPage);
+export default withAdminAuth(AdminDashboard);
