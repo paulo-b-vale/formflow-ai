@@ -1,17 +1,33 @@
-# 🤖 FormFlow AI - Intelligent Conversational Form Assistant
+# 🤖 FlowForm AI - Production-Ready Conversational Form Assistant
 
 <div align="center">
 
-**An AI-powered conversational assistant that automates form filling, analysis, and report generation using advanced language models.**
+**A full-stack, AI-powered conversational assistant that automates form filling, analysis, and report generation using Google Gemini and advanced language models.**
 
+[![CI Pipeline](https://github.com/YOUR_USERNAME/flowform-ai/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR_USERNAME/flowform-ai/actions/workflows/ci.yml)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.104+-green.svg)](https://fastapi.tiangolo.com/)
 [![Next.js](https://img.shields.io/badge/Next.js-14+-black.svg)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-3178C6.svg)](https://www.typescriptlang.org/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-7.0+-47A248.svg)](https://www.mongodb.com/)
+[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED.svg)](https://www.docker.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-[🎬 Demos](#-demo-videos) • [🌟 Features](#-key-features) • [🚀 Quick Start](#-quick-start) • [🏗️ Architecture](#️-architecture) • [📋 API](#-api-documentation)
+[🎬 Demos](#-demo-videos) • [🌟 Features](#-key-features) • [🚀 Quick Start](#-quick-start) • [☁️ Deploy](#️-deployment) • [🏗️ Architecture](#️-architecture) • [🧪 Testing](#-testing)
 
 </div>
+
+---
+
+## ✨ Highlights
+
+> **Production-Ready**: Includes CI/CD pipeline, structured logging, health endpoints, rate limiting, and comprehensive test coverage.
+
+- 🧠 **AI-Powered**: Leverages Google Gemini for intelligent form prediction and conversational filling
+- 🎨 **Modern UI**: Typeform-inspired design with Gemini-style chat interface
+- 🔒 **Enterprise Security**: JWT auth, role-based access, rate limiting, and security scanning
+- 📊 **Observable**: Structured JSON logging, health checks, and metrics endpoints
+- 🐳 **Cloud-Native**: Docker-ready with one-click deploy options
 
 ---
 
@@ -198,13 +214,52 @@ Once the application is running, access the interactive API documentation:
 
 ## 🧪 Testing
 
+The project includes a comprehensive test suite covering authentication, user management, and forms APIs.
+
 ```bash
 # Run all tests
-python -m pytest tests/ -v
+make test
 
-# Run with coverage
-python -m pytest tests/ --cov=app --cov-report=html
+# Run with coverage report
+make test-coverage
+
+# Run quality checks (lint + type check + security)
+make quality
+
+# Run all checks before committing
+make check
 ```
+
+### Test Coverage
+
+| Module | Coverage |
+|--------|----------|
+| `app/routers/auth_router.py` | Authentication flows |
+| `app/routers/user_router.py` | User management |
+| `app/routers/forms_router.py` | Forms CRUD operations |
+
+---
+
+## ☁️ Deployment
+
+### Quick Deploy Options
+
+| Platform | Status |
+|----------|--------|
+| **Railway** | One-click deploy ready |
+| **Render** | Dockerfile supported |
+| **Docker** | Full compose setup |
+
+```bash
+# Production Docker deployment
+docker-compose -f docker-compose.yml up -d --build
+
+# Check health
+curl http://localhost:8000/health
+curl http://localhost:8000/ready
+```
+
+📖 See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for detailed deployment instructions.
 
 ---
 
