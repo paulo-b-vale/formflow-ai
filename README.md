@@ -31,7 +31,20 @@
 
 ---
 
-## 🎬 Demo Videos
+## 🎬 Live Demo & Previews
+
+**🌐 Live Deployment:** [https://flowform-ai-two.vercel.app](https://flowform-ai-two.vercel.app)
+
+> **Note for Recruiters & Reviewers:** You do **not** need to log in to see the AI in action! The homepage features a live, split-screen **Interactive Wizard Demo** that demonstrates the core natural-language form filling capability instantly.
+
+### Interactive Wizard (Public Demo)
+<div align="center">
+
+![Split-Screen Wizard](frontend/public/wizard_demo.png)
+
+*The new landing page features a split-screen AI wizard that extracts data from conversation and fills the form in real-time.*
+
+</div>
 
 ### Admin Dashboard Walkthrough
 <div align="center">
@@ -39,15 +52,6 @@
 ![Admin Demo](frontend/public/admin_demo.webp)
 
 *Complete admin walkthrough - Login, Users, Contexts, Forms, Responses, Assignments, and Analytics*
-
-</div>
-
-### AI Chat Form Filling
-<div align="center">
-
-![Chat Demo](frontend/public/chat_demo.webp)
-
-*Conversational form filling - AI extracts data from natural conversation and fills forms automatically*
 
 </div>
 
