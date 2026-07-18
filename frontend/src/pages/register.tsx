@@ -46,10 +46,8 @@ export default function RegisterPage() {
         <div className="relative z-10 flex flex-col items-center justify-center w-full p-12">
           {/* Logo */}
           <div className={`mb-8 ${mounted ? 'animate-float' : ''}`}>
-            <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-slate-600 via-blue-500 to-teal-500 flex items-center justify-center shadow-2xl">
-              <svg className="w-12 h-12 text-white" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2L13.09 8.26L19 9.27L13.18 14.14L14.18 20.02L12 17.77L9.82 20.02L10.82 14.14L5 9.27L10.91 8.26L12 2Z" />
-              </svg>
+            <div className="w-24 h-24 rounded-[2rem] bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-2xl shadow-indigo-500/30 border border-white/10">
+              <span className="text-5xl font-bold text-white">FF</span>
             </div>
           </div>
 
@@ -61,30 +59,24 @@ export default function RegisterPage() {
           </p>
 
           {/* Benefits */}
-          <div className="mt-12 space-y-4">
-            <div className="flex items-center gap-3 text-slate-300">
-              <div className="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center">
-                <svg className="w-4 h-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+          <div className="mt-12 space-y-5">
+            <div className="flex items-center gap-4 text-slate-300 bg-white/5 px-4 py-3 rounded-2xl border border-white/5">
+              <div className="w-10 h-10 rounded-xl bg-indigo-500/20 flex items-center justify-center text-xl">
+                ⚡
               </div>
-              <span>Setup in under 2 minutes</span>
+              <span className="font-medium">Setup in under 2 minutes</span>
             </div>
-            <div className="flex items-center gap-3 text-slate-300">
-              <div className="w-8 h-8 rounded-lg bg-teal-500/20 flex items-center justify-center">
-                <svg className="w-4 h-4 text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                </svg>
+            <div className="flex items-center gap-4 text-slate-300 bg-white/5 px-4 py-3 rounded-2xl border border-white/5">
+              <div className="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center text-xl">
+                🔒
               </div>
-              <span>Enterprise-grade security</span>
+              <span className="font-medium">Enterprise-grade security</span>
             </div>
-            <div className="flex items-center gap-3 text-slate-300">
-              <div className="w-8 h-8 rounded-lg bg-slate-500/20 flex items-center justify-center">
-                <svg className="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
+            <div className="flex items-center gap-4 text-slate-300 bg-white/5 px-4 py-3 rounded-2xl border border-white/5">
+              <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center text-xl">
+                🎯
               </div>
-              <span>Instant AI responses</span>
+              <span className="font-medium">Instant AI responses</span>
             </div>
           </div>
         </div>
@@ -101,10 +93,8 @@ export default function RegisterPage() {
         <div className={`relative z-10 w-full max-w-md ${mounted ? 'animate-fade-in' : 'opacity-0'}`}>
           {/* Mobile logo */}
           <div className="lg:hidden flex justify-center mb-8">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-slate-600 via-blue-500 to-teal-500 flex items-center justify-center shadow-lg">
-              <svg className="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2L13.09 8.26L19 9.27L13.18 14.14L14.18 20.02L12 17.77L9.82 20.02L10.82 14.14L5 9.27L10.91 8.26L12 2Z" />
-              </svg>
+            <div className="w-16 h-16 rounded-[1.25rem] bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/30 border border-white/10">
+              <span className="text-3xl font-bold text-white">FF</span>
             </div>
           </div>
 

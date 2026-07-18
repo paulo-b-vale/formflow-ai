@@ -38,10 +38,8 @@ export default function LoginPage() {
         <div className="relative z-10 flex flex-col items-center justify-center w-full p-12">
           {/* Logo */}
           <div className={`mb-8 ${mounted ? 'animate-float' : ''}`}>
-            <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-slate-600 via-blue-500 to-teal-500 flex items-center justify-center shadow-2xl">
-              <svg className="w-12 h-12 text-white" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2L13.09 8.26L19 9.27L13.18 14.14L14.18 20.02L12 17.77L9.82 20.02L10.82 14.14L5 9.27L10.91 8.26L12 2Z" />
-              </svg>
+            <div className="w-24 h-24 rounded-[2rem] bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-2xl shadow-indigo-500/30 border border-white/10">
+              <span className="text-5xl font-bold text-white">FF</span>
             </div>
           </div>
 
@@ -53,30 +51,24 @@ export default function LoginPage() {
           </p>
 
           {/* Features list */}
-          <div className="mt-12 space-y-4">
-            <div className="flex items-center gap-3 text-slate-300">
-              <div className="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center">
-                <svg className="w-4 h-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
+          <div className="mt-12 space-y-5">
+            <div className="flex items-center gap-4 text-slate-300 bg-white/5 px-4 py-3 rounded-2xl border border-white/5">
+              <div className="w-10 h-10 rounded-xl bg-indigo-500/20 flex items-center justify-center text-xl">
+                ⚡
               </div>
-              <span>AI-powered form filling</span>
+              <span className="font-medium">AI-powered form filling</span>
             </div>
-            <div className="flex items-center gap-3 text-slate-300">
-              <div className="w-8 h-8 rounded-lg bg-teal-500/20 flex items-center justify-center">
-                <svg className="w-4 h-4 text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
+            <div className="flex items-center gap-4 text-slate-300 bg-white/5 px-4 py-3 rounded-2xl border border-white/5">
+              <div className="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center text-xl">
+                🔒
               </div>
-              <span>Natural conversation interface</span>
+              <span className="font-medium">Natural conversation interface</span>
             </div>
-            <div className="flex items-center gap-3 text-slate-300">
-              <div className="w-8 h-8 rounded-lg bg-slate-500/20 flex items-center justify-center">
-                <svg className="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
+            <div className="flex items-center gap-4 text-slate-300 bg-white/5 px-4 py-3 rounded-2xl border border-white/5">
+              <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center text-xl">
+                🎯
               </div>
-              <span>Automated report generation</span>
+              <span className="font-medium">Automated report generation</span>
             </div>
           </div>
         </div>
@@ -93,10 +85,8 @@ export default function LoginPage() {
         <div className={`relative z-10 w-full max-w-md ${mounted ? 'animate-fade-in' : 'opacity-0'}`}>
           {/* Mobile logo */}
           <div className="lg:hidden flex justify-center mb-8">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-slate-600 via-blue-500 to-teal-500 flex items-center justify-center shadow-lg">
-              <svg className="w-8 h-8 text-white" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2L13.09 8.26L19 9.27L13.18 14.14L14.18 20.02L12 17.77L9.82 20.02L10.82 14.14L5 9.27L10.91 8.26L12 2Z" />
-              </svg>
+            <div className="w-16 h-16 rounded-[1.25rem] bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/30 border border-white/10">
+              <span className="text-3xl font-bold text-white">FF</span>
             </div>
           </div>
 
